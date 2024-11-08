@@ -1,35 +1,28 @@
-import _ from 'lodash';
-
-const createStr = (value) => {
-  if (_.isPlainObject(value)) {
+const getType = (value) => {
+  if (value instanceof Object) {
     return '[complex value]';
   }
-  return typeof value === 'string' ? `'${value}'` : String(value);
+  if (typeof value === 'string') {
+    return `'${value}'`;
+  }
+  return `${value}`;
 };
-
-const getPlain = (tree) => {
-  const iter = (node, path = '') => {
-    const result = node.flatMap((item) => {
-      const currentPath = `${path}${item.key}`;
-      if (item.type === 'nested') {
-        return iter(item.children, `${currentPath}.`);
-      }
-      if (item.type === 'added') {
-        return `Property '${currentPath}' was added with value: ${createStr(item.value)}`;
-      }
-      if (item.type === 'deleted') {
-        return `Property '${currentPath}' was removed`;
-      }
-      if (item.type === 'changed') {
-        return `Property '${currentPath}' was updated. From ${createStr(item.value1)} to ${createStr(item.value2)}`;
-      }
-      if (item.type === 'unchanged') {
-        return [];
-      }
-      return 'Unknown format';
-    });
-    return `${result.join('\n')}`;
-  };
-  return iter(tree);
+const getFormatPlain = (treeDiff, depth = 0, ancestry = '') => {
+  const formatPlain = treeDiff.reduce((acc, key) => {
+    if (key.type === 'addedObjOne') {
+      return `${acc}\nProperty '${ancestry}${key.name}' was removed`;
+    }
+    if (key.type === 'addedObjTwo') {
+      return `${acc}\nProperty '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
+    }
+    if (key.type === 'identicalKeyWithValObject') {
+      return `${acc}${getFormatPlain(key.children, depth + 1, `${ancestry}${key.name}.`)}`;
+    }
+    if (key.type === 'identicalKeyValDifferent') {
+      return `${acc}\nProperty '${ancestry}${key.name}' was updated. From ${getType(key.valueObjOne)} to ${getType(key.valueObjTwo)}`;
+    }
+    return acc;
+  }, '');
+  return formatPlain;
 };
-export default getPlain;
+export default getFormatPlain;

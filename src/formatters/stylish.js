@@ -1,40 +1,39 @@
-import _ from 'lodash';
-
-const space = (depth, countSpace = 4) => ' '.repeat(depth * countSpace);
-const indent = ' '.repeat(2);
-const getFormatStr = (tree, depth = 0) => {
-  if (_.isPlainObject(tree)) {
-    const keys = Object.keys(tree);
-    const result = keys.map((key) => `${space(depth)}${key}: ${getFormatStr(tree[key], depth + 1)}`);
-    return `{\n${result.join('\n')}\n${space(depth - 1)}}`;
+const getQuantityIndent = (depth, displacement = 2) => {
+  const basicQuantityIndent = 4;
+  const quantityIndent = (depth * basicQuantityIndent) - displacement;
+  return quantityIndent;
+};
+const getCorrectValue = (value, indent, depth) => {
+  if (value instanceof Object) {
+    const entries = Object.entries(value);
+    const newKeyValue = entries.reduce((acc, keyValue) => {
+      const newAcc = `${acc}\n${indent.repeat(getQuantityIndent(depth, 0))}${keyValue[0]}: ${getCorrectValue(keyValue[1], indent, depth + 1)}`;
+      return newAcc;
+    }, '');
+    return `{${newKeyValue}\n${indent.repeat(getQuantityIndent(depth - 1, 0))}}`;
   }
-  return tree;
+  return value;
 };
+const getFormatStylish = (treeDiff, depth = 1) => {
+  const indent = ' ';
+  const formatStylish = treeDiff.reduce((acc, key) => {
+    if (key.type === 'addedObjOne') {
+      return `${acc}\n${indent.repeat(getQuantityIndent(depth))}- ${key.name}: ${getCorrectValue(key.value, indent, depth + 1)}`;
+    }
+    if (key.type === 'addedObjTwo') {
+      return `${acc}\n${indent.repeat(getQuantityIndent(depth))}+ ${key.name}: ${getCorrectValue(key.value, indent, depth + 1)}`;
+    }
+    if (key.type === 'identicalKeyWithValObject') {
+      return `${acc}\n${indent.repeat(getQuantityIndent(depth))}  ${key.name}: ${getFormatStylish(key.children, depth + 1)}`;
+    }
+    if (key.type === 'identicalKeyValStaySame') {
+      return `${acc}\n${indent.repeat(getQuantityIndent(depth))}  ${key.name}: ${getCorrectValue(key.value, indent, depth + 1)}`;
+    }
 
-const getStylish = (tree) => {
-  const iter = (node, depth = 1) => {
-    const result = node.flatMap((item) => {
-      if (item.type === 'nested') {
-        return `${space(depth - 1)}${indent}  ${item.key}: ${iter(item.children, depth + 1)}`;
-      }
-      if (item.type === 'added') {
-        return `${space(depth - 1)}${indent}+ ${item.key}: ${getFormatStr(item.value, depth + 1)}`;
-      }
-      if (item.type === 'deleted') {
-        return `${space(depth - 1)}${indent}- ${item.key}: ${getFormatStr(item.value, depth + 1)}`;
-      }
-      if (item.type === 'changed') {
-        return [
-          `${space(depth - 1)}${indent}- ${item.key}: ${getFormatStr(item.value1, depth + 1)}`,
-          `${space(depth - 1)}${indent}+ ${item.key}: ${getFormatStr(item.value2, depth + 1)}`];
-      }
-      if (item.type === 'unchanged') {
-        return `${space(depth - 1)}${indent}  ${item.key}: ${getFormatStr(item.value1, depth + 1)}`;
-      }
-      return 'Unknown format';
-    });
-    return `{\n${result.join('\n')}\n${space(depth - 1)}}`;
-  };
-  return iter(tree);
+    const dataObjOne = `${indent.repeat(getQuantityIndent(depth))}- ${key.name}: ${getCorrectValue(key.valueObjOne, indent, depth + 1)}`;
+    const dataObjTwo = `${indent.repeat(getQuantityIndent(depth))}+ ${key.name}: ${getCorrectValue(key.valueObjTwo, indent, depth + 1)}`;
+    return `${acc}\n${dataObjOne}\n${dataObjTwo}`;
+  }, '');
+  return `{${formatStylish}\n${indent.repeat(getQuantityIndent(depth - 1, 0))}}`;
 };
-export default getStylish;
+export default getFormatStylish;

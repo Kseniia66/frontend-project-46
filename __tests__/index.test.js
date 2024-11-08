@@ -19,7 +19,7 @@ test.each([
   [pathFileJsonOne, pathFileYmlTwo],
   [pathFileYmlOne, pathFileJsonTwo],
 ])('stylish', (a, b) => {
-  const pathFileResStylish = getFixturePath('stylish');
+  const pathFileResStylish = getFixturePath('resultStylish');
   const contentFileResStylish = readFileSync(pathFileResStylish, 'utf-8');
   expect(genDiffResult(a, b)).toBe(contentFileResStylish);
 });
@@ -29,7 +29,7 @@ test.each([
   [pathFileJsonOne, pathFileYmlTwo, 'plain'],
   [pathFileYmlOne, pathFileJsonTwo, 'plain'],
 ])('plain', (a, b, c) => {
-  const pathFileResPlain = getFixturePath('plain');
+  const pathFileResPlain = getFixturePath('resultPlain');
   const contentFileResPlain = readFileSync(pathFileResPlain, 'utf-8');
   expect(genDiffResult(a, b, c)).toBe(contentFileResPlain);
 });
@@ -39,7 +39,7 @@ test.each([
   [pathFileJsonOne, pathFileYmlTwo, 'json'],
   [pathFileYmlOne, pathFileJsonTwo, 'json'],
 ])('json', (a, b, c) => {
-  const pathFileResJson = getFixturePath('json');
+  const pathFileResJson = getFixturePath('resultJson');
   const contentFileResJson = readFileSync(pathFileResJson, 'utf-8');
   expect(genDiffResult(a, b, c)).toBe(contentFileResJson);
 });

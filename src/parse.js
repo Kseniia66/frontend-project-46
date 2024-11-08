@@ -1,9 +1,12 @@
 import yaml from 'js-yaml';
 
-const parsers = {
-  json: JSON.parse,
-  yaml: yaml.load,
-  yml: yaml.load,
+export default (contentFile, formatFile) => {
+  switch (formatFile) {
+    case 'json':
+      return JSON.parse(contentFile); // из json в js
+    case 'yml' || 'yaml':
+      return yaml.load(contentFile); // из yml в js
+    default:
+      throw new Error(`Error! This format - ${formatFile} - is not provided. Exist (json, yml, yaml)`);
+  }
 };
-
-export default (data, format) => parsers[format](data);
