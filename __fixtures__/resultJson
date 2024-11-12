@@ -1,65 +1,65 @@
 [
   {
     "name": "common",
-    "type": "identicalKeyWithValObject",
+    "type": "nested",
     "children": [
       {
         "name": "follow",
-        "type": "addedObjTwo",
+        "type": "added",
         "value": false
       },
       {
         "name": "setting1",
-        "type": "identicalKeyValStaySame",
+        "type": "unchanged",
         "value": "Value 1"
       },
       {
         "name": "setting2",
-        "type": "addedObjOne",
+        "type": "deleted",
         "value": 200
       },
       {
         "name": "setting3",
-        "type": "identicalKeyValDifferent",
-        "valueObjOne": true,
-        "valueObjTwo": null
+        "type": "changed",
+        "value1": true,
+        "value2": null
       },
       {
         "name": "setting4",
-        "type": "addedObjTwo",
+        "type": "added",
         "value": "blah blah"
       },
       {
         "name": "setting5",
-        "type": "addedObjTwo",
+        "type": "added",
         "value": {
           "key5": "value5"
         }
       },
       {
         "name": "setting6",
-        "type": "identicalKeyWithValObject",
+        "type": "nested",
         "children": [
           {
             "name": "doge",
-            "type": "identicalKeyWithValObject",
+            "type": "nested",
             "children": [
               {
                 "name": "wow",
-                "type": "identicalKeyValDifferent",
-                "valueObjOne": "",
-                "valueObjTwo": "so much"
+                "type": "changed",
+                "value1": "",
+                "value2": "so much"
               }
             ]
           },
           {
             "name": "key",
-            "type": "identicalKeyValStaySame",
+            "type": "unchanged",
             "value": "value"
           },
           {
             "name": "ops",
-            "type": "addedObjTwo",
+            "type": "added",
             "value": "vops"
           }
         ]
@@ -68,32 +68,32 @@
   },
   {
     "name": "group1",
-    "type": "identicalKeyWithValObject",
+    "type": "nested",
     "children": [
       {
         "name": "baz",
-        "type": "identicalKeyValDifferent",
-        "valueObjOne": "bas",
-        "valueObjTwo": "bars"
+        "type": "changed",
+        "value1": "bas",
+        "value2": "bars"
       },
       {
         "name": "foo",
-        "type": "identicalKeyValStaySame",
+        "type": "unchanged",
         "value": "bar"
       },
       {
         "name": "nest",
-        "type": "identicalKeyValDifferent",
-        "valueObjOne": {
+        "type": "changed",
+        "value1": {
           "key": "value"
         },
-        "valueObjTwo": "str"
+        "value2": "str"
       }
     ]
   },
   {
     "name": "group2",
-    "type": "addedObjOne",
+    "type": "deleted",
     "value": {
       "abc": 12345,
       "deep": {
@@ -103,7 +103,7 @@
   },
   {
     "name": "group3",
-    "type": "addedObjTwo",
+    "type": "added",
     "value": {
       "deep": {
         "id": {

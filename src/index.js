@@ -1,27 +1,21 @@
 import path from 'path';
-import { readFileSync } from 'node:fs';
-import { cwd } from 'node:process';
+import fs from 'fs';
 import chooseFormat from './formatters/index.js';
 import parse from './parse.js';
 import getDiff from './treeBuilder.js';
 
-const getContentFile = (filepathOriginalOne, filepathOriginalTwo) => {
-  const pathCwd = cwd();
-  const filepathResolveOne = path.resolve(pathCwd, filepathOriginalOne);
-  const filepathResolveTwo = path.resolve(pathCwd, filepathOriginalTwo);
-  const contentFileOne = readFileSync(filepathResolveOne, 'utf-8');
-  const contentFileTwo = readFileSync(filepathResolveTwo, 'utf-8');
-  const formatFileOne = path.extname(filepathResolveOne).slice(1);
-  const formatFileTwo = path.extname(filepathResolveTwo).slice(1);
-  const objContentFileOne = parse(contentFileOne, formatFileOne);
-  const objContentFileTwo = parse(contentFileTwo, formatFileTwo);
-  return [objContentFileOne, objContentFileTwo];
+const getContentFile = (filepath) => {
+  const filepathResolve = path.resolve(process.cwd(), filepath);
+  const contentFile = fs.readFileSync(filepathResolve, 'utf-8');
+  const formatFile = path.extname(filepathResolve).slice(1);
+  const objContentFile = parse(contentFile, formatFile);
+  return objContentFile;
 };
 
-export default (filepathOriginalOne, filepathOriginalTwo, format = 'stylish') => {
-  const [objContFileOne, objContFileTwo] = getContentFile(filepathOriginalOne, filepathOriginalTwo);
-
-  const treeDiff = getDiff(objContFileOne, objContFileTwo);
+export default (filepath1, filepath2, format = 'stylish') => {
+  const data1 = getContentFile(filepath1);
+  const data2 = getContentFile(filepath2);
+  const treeDiff = getDiff(data1, data2);
   const resFormatDiff = chooseFormat(treeDiff, format);
   return resFormatDiff;
 };

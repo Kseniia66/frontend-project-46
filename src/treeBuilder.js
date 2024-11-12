@@ -1,44 +1,43 @@
 import _ from 'lodash';
 
-const getDiff = (objContentFileOne, objContentFileTwo) => {
-  const tempObjWithUniqKeys = { ...objContentFileOne, ...objContentFileTwo };
+const getDiff = (data1, data2) => {
+  const tempObjWithUniqKeys = { ...data1, ...data2 };
   const keysUniqNoSorted = Object.keys(tempObjWithUniqKeys);
   const keysUniq = _.sortBy(keysUniqNoSorted);
   const treeDifference = keysUniq.map((key) => {
-    if (Object.hasOwn(objContentFileOne, key) && !Object.hasOwn(objContentFileTwo, key)) {
+    if (!Object.hasOwn(data2, key)) {
       return {
         name: key,
-        type: 'addedObjOne',
-        value: objContentFileOne[key],
+        type: 'deleted',
+        value: data1[key],
       };
     }
-    if (Object.hasOwn(objContentFileTwo, key) && !Object.hasOwn(objContentFileOne, key)) {
+    if (!Object.hasOwn(data1, key)) {
       return {
         name: key,
-        type: 'addedObjTwo',
-        value: objContentFileTwo[key],
+        type: 'added',
+        value: data2[key],
       };
     }
-    if (objContentFileOne[key] instanceof Object && objContentFileTwo[key] instanceof Object) {
+    if (_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
       return {
         name: key,
-        type: 'identicalKeyWithValObject',
-        children: getDiff(objContentFileOne[key], objContentFileTwo[key]),
+        type: 'nested',
+        children: getDiff(data1[key], data2[key]),
       };
     }
-    if (objContentFileOne[key] === objContentFileTwo[key]) {
+    if (data1[key] === data2[key]) {
       return {
         name: key,
-        type: 'identicalKeyValStaySame',
-        value: objContentFileOne[key],
+        type: 'unchanged',
+        value: data1[key],
       };
     }
-
     return {
       name: key,
-      type: 'identicalKeyValDifferent',
-      valueObjOne: objContentFileOne[key],
-      valueObjTwo: objContentFileTwo[key],
+      type: 'changed',
+      value1: data1[key],
+      value2: data2[key],
     };
   });
   return treeDifference;

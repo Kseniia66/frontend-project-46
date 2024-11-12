@@ -9,17 +9,17 @@ const getType = (value) => {
 };
 const getFormatPlain = (treeDiff, depth = 0, ancestry = '') => {
   const formatPlain = treeDiff.reduce((acc, key) => {
-    if (key.type === 'addedObjOne') {
+    if (key.type === 'deleted') {
       return `${acc}\nProperty '${ancestry}${key.name}' was removed`;
     }
-    if (key.type === 'addedObjTwo') {
+    if (key.type === 'added') {
       return `${acc}\nProperty '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
     }
-    if (key.type === 'identicalKeyWithValObject') {
+    if (key.type === 'nested') {
       return `${acc}${getFormatPlain(key.children, depth + 1, `${ancestry}${key.name}.`)}`;
     }
-    if (key.type === 'identicalKeyValDifferent') {
-      return `${acc}\nProperty '${ancestry}${key.name}' was updated. From ${getType(key.valueObjOne)} to ${getType(key.valueObjTwo)}`;
+    if (key.type === 'changed') {
+      return `${acc}\nProperty '${ancestry}${key.name}' was updated. From ${getType(key.value1)} to ${getType(key.value2)}`;
     }
     return acc;
   }, '');
