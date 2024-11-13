@@ -1,12 +1,13 @@
 import yaml from 'js-yaml';
 
-export default (contentFile, formatFile) => {
-  switch (formatFile) {
+export default (content, format) => {
+  switch (format) {
     case 'json':
-      return JSON.parse(contentFile);
-    case 'yml' || 'yaml':
-      return yaml.load(contentFile);
+      return JSON.parse(content);
+    case 'yml':
+    case 'yaml':
+      return yaml.load(content);
     default:
-      throw new Error(`Error! This format - ${formatFile} - is not provided. Exist (json, yml, yaml)`);
+      throw new Error(`Error! This format - ${format} - is not provided. Exist (json, yml, yaml)`);
   }
 };
