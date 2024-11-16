@@ -1,16 +1,16 @@
 import getFormatStylish from './stylish.js';
 import getFormatPlain from './plain.js';
 
-const chooseFormat = (treeDiff, format) => {
-  switch (format) {
+const format = (treeDiff, formatName) => {
+  switch (formatName) {
     case 'stylish':
       return getFormatStylish(treeDiff);
     case 'plain':
-      return getFormatPlain(treeDiff).slice(1);
+      return getFormatPlain(treeDiff);
     case 'json':
       return JSON.stringify(treeDiff, null, 2);
     default:
-      throw new Error('Error in chooseFormat (stylish, plain, json)');
+      throw new Error('Error in format (stylish, plain, json)');
   }
 };
-export default chooseFormat;
+export default format;

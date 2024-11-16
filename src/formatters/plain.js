@@ -8,21 +8,21 @@ const getType = (value) => {
   return `${value}`;
 };
 const getFormatPlain = (treeDiff, depth = 0, ancestry = '') => {
-  const formatPlain = treeDiff.reduce((acc, key) => {
+  const formatPlain = treeDiff.flatMap((key) => {
     if (key.type === 'deleted') {
-      return `${acc}\nProperty '${ancestry}${key.name}' was removed`;
+      return `Property '${ancestry}${key.name}' was removed`;
     }
     if (key.type === 'added') {
-      return `${acc}\nProperty '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
+      return `Property '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
     }
     if (key.type === 'nested') {
-      return `${acc}${getFormatPlain(key.children, depth + 1, `${ancestry}${key.name}.`)}`;
+      return `${getFormatPlain(key.children, depth + 1, `${ancestry}${key.name}.`)}`;
     }
     if (key.type === 'changed') {
-      return `${acc}\nProperty '${ancestry}${key.name}' was updated. From ${getType(key.value1)} to ${getType(key.value2)}`;
+      return `Property '${ancestry}${key.name}' was updated. From ${getType(key.value1)} to ${getType(key.value2)}`;
     }
-    return acc;
-  }, '');
+    return [];
+  }).join('\n');
   return formatPlain;
 };
 export default getFormatPlain;
