@@ -11,7 +11,7 @@ const pathFileYmlTwo = getFixturePath('file2.yml');
 
 const genDiffResult = genDiff;
 
-const formatters = ['stylish', 'plain', 'json']; 
+const formatters = ['stylish', 'plain', 'json'];
 
 test.each([
   [pathFileJsonOne, pathFileYmlTwo],
