@@ -7,22 +7,29 @@ const getType = (value) => {
   }
   return `${value}`;
 };
-const getFormatPlain = (treeDiff, depth = 0, ancestry = '') => {
-  const formatPlain = treeDiff.flatMap((key) => {
-    if (key.type === 'deleted') {
-      return `Property '${ancestry}${key.name}' was removed`;
-    }
-    if (key.type === 'added') {
-      return `Property '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
-    }
-    if (key.type === 'nested') {
-      return `${getFormatPlain(key.children, depth + 1, `${ancestry}${key.name}.`)}`;
-    }
-    if (key.type === 'changed') {
-      return `Property '${ancestry}${key.name}' was updated. From ${getType(key.value1)} to ${getType(key.value2)}`;
-    }
-    return [];
-  }).join('\n');
-  return formatPlain;
+
+const getFormatPlain = (treeDiff) => {
+  const formatPlain = (currentTreeDiff, ancestry = '') => {
+    const formattedLines = currentTreeDiff.flatMap((key) => {
+      if (key.type === 'deleted') {
+        return `Property '${ancestry}${key.name}' was removed`;
+      }
+      if (key.type === 'added') {
+        return `Property '${ancestry}${key.name}' was added with value: ${getType(key.value)}`;
+      }
+      if (key.type === 'nested') {
+        return formatPlain(key.children, `${ancestry}${key.name}.`);
+      }
+      if (key.type === 'changed') {
+        return `Property '${ancestry}${key.name}' was updated. From ${getType(key.value1)} to ${getType(key.value2)}`;
+      }
+      return [];
+    }).join('\n');
+
+    return formattedLines;
+  };
+
+  return formatPlain(treeDiff);
 };
+
 export default getFormatPlain;

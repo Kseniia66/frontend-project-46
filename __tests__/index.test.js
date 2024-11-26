@@ -9,16 +9,12 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 const pathFileJsonOne = getFixturePath('file1.json');
 const pathFileYmlTwo = getFixturePath('file2.yml');
 
-const genDiffResult = genDiff;
+const formatters = ['stylish', 'plain', 'json', undefined];
 
-const formatters = ['stylish', 'plain', 'json'];
+test.each(formatters)('generate difference: %s', (formatter) => {
+  const effectiveFormatter = formatter === undefined ? 'stylish' : formatter;
+  const pathFileResult = getFixturePath(`${effectiveFormatter}Result.txt`);
+  const contentFileResult = readFileSync(pathFileResult, 'utf-8');
 
-test.each([
-  [pathFileJsonOne, pathFileYmlTwo],
-])('generate difference using different format', (a, b) => {
-  formatters.forEach((formatter) => {
-    const pathFileResult = getFixturePath(`result${formatter.charAt(0).toUpperCase() + formatter.slice(1)}`);
-    const contentFileResult = readFileSync(pathFileResult, 'utf-8');
-    expect(genDiffResult(a, b, formatter)).toBe(contentFileResult);
-  });
+  expect(genDiff(pathFileJsonOne, pathFileYmlTwo, formatter)).toBe(contentFileResult);
 });
